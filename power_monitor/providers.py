@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Max-Woont
 from __future__ import annotations
 
 import json
@@ -8,6 +10,14 @@ from PySide6.QtCore import QObject, Signal
 from power_monitor.config import STATE_CACHE_PATH
 
 FEED_URL_TEMPLATE = "https://raw.githubusercontent.com/mrkaktuz/outages-data/data/{region}.json"
+
+# The feed is licensed CC BY 4.0 and must be credited in this exact form (see THIRD_PARTY_NOTICES.md).
+DATA_SOURCE_URL = "https://github.com/mrkaktuz/outages-data"
+DATA_ATTRIBUTION_HTML = (
+    f'Данные: outages-data, <a href="{DATA_SOURCE_URL}">{DATA_SOURCE_URL}</a> '
+    '(<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>), '
+    "обработаны приложением"
+)
 
 
 class FetchWorker(QObject):

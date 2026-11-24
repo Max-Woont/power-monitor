@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Max-Woont
 from __future__ import annotations
 
 from datetime import datetime, timedelta
@@ -16,6 +18,7 @@ from PySide6.QtWidgets import (
 )
 
 from power_monitor.models import STATUS_LABELS, Interval
+from power_monitor.providers import DATA_SOURCE_URL
 
 
 class SchedulePopup(QWidget):
@@ -65,6 +68,14 @@ class SchedulePopup(QWidget):
         self.summary_label = QLabel("")
         self.summary_label.setStyleSheet("color: #9ca3af; font-size: 11px;")
         root.addWidget(self.summary_label)
+
+        source_label = QLabel(
+            f'<a style="color:#6b7280;" href="{DATA_SOURCE_URL}">Данные: outages-data (CC BY 4.0)</a>'
+        )
+        source_label.setOpenExternalLinks(True)
+        source_label.setToolTip(DATA_SOURCE_URL)
+        source_label.setStyleSheet("font-size: 10px;")
+        root.addWidget(source_label)
 
         btn_row = QHBoxLayout()
         refresh_btn = QPushButton("Обновить")

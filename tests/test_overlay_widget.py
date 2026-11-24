@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Max-Woont
 """Smoke tests that paint every overlay mode off-screen. Skipped when Qt is unavailable."""
 
 import os

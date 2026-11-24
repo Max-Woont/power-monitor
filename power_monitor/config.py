@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Max-Woont
 """Persistent application settings (``~/.power_monitor/config.json``)."""
 
 from __future__ import annotations

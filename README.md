@@ -5,6 +5,7 @@
 [![CI](https://github.com/Max-Woont/power-monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/Max-Woont/power-monitor/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![PySide6](https://img.shields.io/badge/GUI-PySide6-41cd52)
+[![License: GPL v3](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
 
 A desktop app (**Python + PySide6**) that tracks hourly power outage schedules in Ukraine (ГПВ):
 a system tray icon, a customizable floating countdown overlay, a today/tomorrow schedule popup
@@ -23,6 +24,7 @@ The app interface is currently in Russian.
 - [Project structure](#project-structure)
 - [Data source](#data-source)
 - [AI assistance](#ai-assistance)
+- [License](#license)
 
 ## Features
 
@@ -149,14 +151,18 @@ power-monitor/
 │   ├── notifier.py               # notifications and quiet hours
 │   └── tray_icons.py             # vector tray icons
 ├── tests/                        # unittest/pytest
+├── licenses/                     # third-party license texts
+├── LICENSE                       # GPL-3.0
+├── THIRD_PARTY_NOTICES.md
 ├── PowerMonitor.spec             # PyInstaller configuration
 └── .github/workflows/            # CI and exe build
 ```
 
 ## Data source
 
-Normalized JSON feeds from [mrkaktuz/outages-data](https://github.com/mrkaktuz/outages-data)
-(CC BY 4.0). This app is not an official product of any power distribution company; always check the
+Normalized JSON feeds: outages-data, https://github.com/mrkaktuz/outages-data
+([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)). The app parses and displays the data; it is also
+credited inside the app (schedule popup and settings). This app is not an official product of any power distribution company; always check the
 original source.
 
 ## AI assistance
@@ -165,3 +171,16 @@ Parts of this project (code, tests and documentation) were developed with the he
 [Claude Code](https://claude.com/claude-code), an AI coding assistant by Anthropic.
 AI-assisted commits are marked with a `Co-Authored-By` trailer in the git history.
 The maintainer reviews these changes and is responsible for the project.
+
+## License
+
+Power Monitor is free software: you can redistribute it and/or modify it under the terms of the
+[GNU General Public License v3.0 or later](LICENSE). Copyright (C) 2026 Max-Woont.
+
+In short: you may use, study, modify and share the app, including commercially, but any distributed
+modified version must also be released under the GPL with its source code.
+
+Third-party libraries and data keep their own licenses, see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Schedule data: outages-data, https://github.com/mrkaktuz/outages-data
+([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)). Only the data is used; the outages-data
+code is under a separate license and is not part of this project.

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Max-Woont
 """Settings dialog. Overlay changes are previewed live and reverted on Cancel."""
 
 from __future__ import annotations
@@ -35,6 +37,7 @@ from power_monitor.config import (
     TRAY_ICON_STYLES,
     AppConfig,
 )
+from power_monitor.providers import DATA_ATTRIBUTION_HTML
 
 DEFAULT_GROUPS = ["1.1", "1.2", "2.1", "2.2", "3.1", "3.2", "4.1", "4.2", "5.1", "5.2", "6.1", "6.2"]
 
@@ -181,6 +184,11 @@ class SettingsDialog(QDialog):
         form.addRow("Интервал опроса:", self.poll_spin)
         form.addRow("Порог зарядки станции:", self.charge_min_spin)
         form.addRow("", self.possible_as_off_check)
+        source = QLabel(DATA_ATTRIBUTION_HTML)
+        source.setWordWrap(True)
+        source.setOpenExternalLinks(True)
+        source.setStyleSheet("color: gray;")
+        form.addRow(source)
         return tab
 
     def _build_look_tab(self) -> QWidget:

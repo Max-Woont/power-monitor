@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Max-Woont
 """Qt-free helpers for the overlay: colour palettes, text formatting and window geometry.
 
 Kept separate from ``overlay.py`` so the logic can be unit-tested without a display.

@@ -19,13 +19,20 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt pyinstaller
       - run: pyinstaller --noconfirm PowerMonitor.spec
+      - name: Package exe with license files
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force release/PowerMonitor | Out-Null
+          Copy-Item dist/PowerMonitor.exe, LICENSE, THIRD_PARTY_NOTICES.md release/PowerMonitor/
+          Copy-Item -Recurse licenses release/PowerMonitor/licenses
+          Compress-Archive -Path release/PowerMonitor/* -DestinationPath release/PowerMonitor-windows.zip
       - uses: actions/upload-artifact@v4
         with:
           name: PowerMonitor-windows
-          path: dist/PowerMonitor.exe
+          path: release/PowerMonitor/
       - name: Attach to GitHub release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/PowerMonitor.exe
+          files: release/PowerMonitor-windows.zip
           generate_release_notes: true

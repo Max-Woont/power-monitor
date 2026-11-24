@@ -5,6 +5,7 @@
 [![CI](https://github.com/Max-Woont/power-monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/Max-Woont/power-monitor/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![PySide6](https://img.shields.io/badge/GUI-PySide6-41cd52)
+[![License: GPL v3](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
 
 Десктопний застосунок на **Python + PySide6** для відстеження графіків погодинних відключень (ГПВ):
 іконка в системному треї, плаваючий оверлей зі зворотним відліком, який можна налаштувати, вікно розкладу
@@ -23,6 +24,7 @@
 - [Структура проєкту](#структура-проєкту)
 - [Джерело даних](#джерело-даних)
 - [Використання ШІ](#використання-ші)
+- [Ліцензія](#ліцензія)
 
 ## Можливості
 
@@ -150,14 +152,18 @@ power-monitor/
 │   ├── notifier.py               # сповіщення та тихі години
 │   └── tray_icons.py             # векторні іконки трею
 ├── tests/                        # unittest/pytest
+├── licenses/                     # third-party license texts
+├── LICENSE                       # GPL-3.0
+├── THIRD_PARTY_NOTICES.md
 ├── PowerMonitor.spec             # конфігурація PyInstaller
 └── .github/workflows/            # CI та збирання exe
 ```
 
 ## Джерело даних
 
-Нормалізовані JSON-фіди з [mrkaktuz/outages-data](https://github.com/mrkaktuz/outages-data)
-(ліцензія CC BY 4.0). Застосунок не є офіційним продуктом обленерго; звіряйтеся з першоджерелом.
+Нормалізовані JSON-фіди: outages-data, https://github.com/mrkaktuz/outages-data
+([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)). Застосунок обробляє й показує ці дані; джерело
+також вказане в самому застосунку (вікно розкладу та налаштування). Застосунок не є офіційним продуктом обленерго; звіряйтеся з першоджерелом.
 
 ## Використання ШІ
 
@@ -165,3 +171,16 @@ power-monitor/
 [Claude Code](https://claude.com/claude-code), ШІ-асистента для програмування від Anthropic.
 Коміти, зроблені за участі ШІ, позначені рядком `Co-Authored-By` в історії git.
 Мейнтейнер переглядає ці зміни й відповідає за проєкт.
+
+## Ліцензія
+
+Power Monitor є вільним програмним забезпеченням: його можна поширювати та змінювати на умовах
+[GNU General Public License v3.0 або новішої](LICENSE). Copyright (C) 2026 Max-Woont.
+
+Коротко: застосунок можна використовувати, вивчати, змінювати й поширювати, зокрема комерційно, але будь-яку
+поширювану змінену версію теж треба випускати під GPL разом із вихідним кодом.
+
+Сторонні бібліотеки й дані мають власні ліцензії, див. [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Дані графіків: outages-data, https://github.com/mrkaktuz/outages-data
+([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)). Використовуються лише дані; код outages-data
+має окрему ліцензію і не входить до цього проєкту.

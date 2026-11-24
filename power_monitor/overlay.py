@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Max-Woont
 """Floating always-on-top HUD with several display modes.
 
 The widget is fully custom-painted: each mode has a ``_measure_*`` method (returns the
