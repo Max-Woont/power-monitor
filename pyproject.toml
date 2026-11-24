@@ -1,7 +1,7 @@
 [project]
 name = "power-monitor"
 dynamic = ["version"]
-description = "Трей-приложение и оверлей для графиков почасовых отключений электроэнергии (ГПВ) в Украине"
+description = "Tray app and overlay for hourly power outage schedules in Ukraine"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [

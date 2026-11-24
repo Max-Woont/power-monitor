@@ -83,7 +83,7 @@ class PowerMonitorApp:
         quit_action = QAction("Выход", menu)
         quit_action.triggered.connect(self.qt_app.quit)
 
-        # Quick overlay settings (mode, theme, scale, ...) — rebuilt each time so check marks are current.
+        # Quick overlay settings (mode, theme, scale, ...); rebuilt each time so check marks are current.
         self.overlay_menu = QMenu("Оверлей", menu)
         self.overlay_menu.aboutToShow.connect(self._rebuild_overlay_menu)
 
@@ -239,7 +239,7 @@ class PowerMonitorApp:
                     self.notifier.send_once(
                         f"on_{key}",
                         "Скоро дадут свет",
-                        f"Через ~{mins_left} мин ({next_change.strftime('%H:%M')}) — можно готовить зарядку.",
+                        f"Через ~{mins_left} мин ({next_change.strftime('%H:%M')}, можно готовить зарядку.",
                         now,
                         force=True,
                     )

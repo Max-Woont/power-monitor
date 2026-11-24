@@ -1,83 +1,87 @@
 # ⚡ Power Monitor
 
+**English** | [Українська](README.uk.md) | [Русский](README.ru.md)
+
 [![CI](https://github.com/Max-Woont/power-monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/Max-Woont/power-monitor/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![PySide6](https://img.shields.io/badge/GUI-PySide6-41cd52)
 
-Десктоп-приложение на **Python + PySide6** для отслеживания графиков почасовых отключений электроэнергии (ГПВ):
-иконка в системном трее, настраиваемый плавающий оверлей с обратным отсчётом, окно расписания на сегодня/завтра
-и нативные уведомления.
+A desktop app (**Python + PySide6**) that tracks hourly power outage schedules in Ukraine (ГПВ):
+a system tray icon, a customizable floating countdown overlay, a today/tomorrow schedule popup
+and native notifications.
 
-## Содержание
+The app interface is currently in Russian.
 
-- [Возможности](#возможности)
-- [Режимы оверлея](#режимы-оверлея)
-- [Настройка оверлея](#настройка-оверлея)
-- [Быстрый старт](#быстрый-старт)
-- [Сборка `.exe`](#сборка-exe-windows)
-- [Разработка](#разработка)
-- [Структура проекта](#структура-проекта)
-- [Источник данных](#источник-данных)
+## Contents
 
-## Возможности
+- [Features](#features)
+- [Overlay modes](#overlay-modes)
+- [Overlay customization](#overlay-customization)
+- [Quick start](#quick-start)
+- [Building the `.exe`](#building-the-exe-windows)
+- [Development](#development)
+- [Project structure](#project-structure)
+- [Data source](#data-source)
+- [AI assistance](#ai-assistance)
 
-- **Несколько регионов:** Николаевская область (`off.energy.mk.ua`), г. Киев, Киевская, Днепропетровская,
-  Одесская и Житомирская области.
-- **Иконка в трее:** скруглённый бейдж с молнией / крестом / индикатором «жёлтой» зоны или стиль «батарея».
-  Клик — компактное окно расписания на сегодня и завтра.
-- **Плавающий оверлей (HUD):** пять режимов отображения, темы, свои цвета, масштаб, привязка к углу экрана,
-  автоскрытие, click-through и «поверх всех окон». Все изменения в настройках видны сразу (живой предпросмотр).
-- **Уведомления:** за N минут до отключения и включения, об изменении графика; тихие часы.
-- **Подсказка для зарядных станций:** предупреждение, если ближайшее окно со светом короче заданного
-  (например, < 60 мин для полной зарядки).
-- **Офлайн-кэш:** при сбое сети расписание берётся из локального кэша, отсчёт продолжается.
+## Features
 
-## Режимы оверлея
+- **Several regions:** Mykolaiv region (`off.energy.mk.ua`), Kyiv city, Kyiv, Dnipropetrovsk,
+  Odesa and Zhytomyr regions.
+- **Tray icon:** rounded badge with a lightning bolt, a cross or a "maybe" indicator, or a battery style.
+  Click it to open a compact schedule for today and tomorrow.
+- **Floating overlay (HUD):** five display modes, themes, custom colours, scaling, screen-corner anchoring,
+  auto-hide, click-through and always-on-top. Every change in the settings is previewed live.
+- **Notifications:** N minutes before an outage starts or ends, and when the schedule changes; quiet hours.
+- **Power station hint:** a warning when the next window with power is shorter than a set threshold
+  (for example, under 60 minutes for a full charge).
+- **Offline cache:** if the network fails, the schedule is read from a local cache and the countdown continues.
 
-| Режим | Что показывает | Когда удобно |
+## Overlay modes
+
+| Mode | Shows | Good for |
 |---|---|---|
-| **Полный** (`full`) | статус, очередь, крупный таймер, следующее событие, предупреждение, шкала | основной режим |
-| **Компактный** (`compact`) | одна строка: точка статуса, статус, таймер, очередь (+ тонкая шкала) | поверх игр/видео |
-| **Минимальный** (`minimal`) | только таймер с цветной меткой статуса | максимум места на экране |
-| **Кольцо** (`ring`) | круговой прогресс текущего периода, таймер в центре | «виджет» в углу экрана |
-| **Полоса** (`bar`) | шкала на N часов вперёд с часовыми засечками и текстом поверх | у верхнего/нижнего края экрана |
+| **Full** (`full`) | status, queue, large timer, next event, warning, timeline | default |
+| **Compact** (`compact`) | one line: status dot, status, timer, queue (+ thin timeline) | on top of games or video |
+| **Minimal** (`minimal`) | the timer with a coloured status mark | maximum free screen space |
+| **Ring** (`ring`) | circular progress of the current period, timer in the centre | a widget in a screen corner |
+| **Bar** (`bar`) | an N-hour timeline with hour ticks and text on top | along the top or bottom screen edge |
 
-Режим переключается в настройках, в меню трея **Оверлей → Режим**, через правый клик по оверлею
-или **двойным кликом** по нему (циклически).
+Switch modes in the settings, in the tray menu (**Оверлей → Режим**), from the overlay's right-click menu
+or by **double-clicking** the overlay (cycles through the modes).
 
-## Настройка оверлея
+## Overlay customization
 
-**Настройки → «Оверлей: вид»**
+**Settings → "Оверлей: вид" (look)**
 
-- Тема: тёмная, светлая, **цвет статуса** (фон окрашивается в цвет текущего состояния) или **своя**
-  (цвет фона и текста выбираются вручную, текст подбирается контрастным автоматически).
-- Акцентный цвет (по умолчанию — цвет статуса), масштаб 50–250 %, прозрачность окна и отдельно — фона
-  (фон можно сделать полностью прозрачным), ширина, скругление углов, рамка, шрифт.
-- Элементы: статус, очередь, строка «следующее событие», предупреждение о коротком окне, секунды в таймере,
-  шкала времени и её горизонт (3–24 ч), подсветка таймера за последние N минут.
-- Кнопка «Сбросить оформление» возвращает вид по умолчанию, не трогая позицию.
+- Theme: dark, light, **status colour** (the background is tinted with the current state colour) or **custom**
+  (pick background and text colours; text contrast is chosen automatically if left on auto).
+- Accent colour (status colour by default), scale 50-250 %, window opacity and a separate background opacity
+  (the background can be fully transparent), width, corner radius, border, font.
+- Elements: status, queue, "next event" line, short-window warning, seconds in the timer,
+  timeline and its horizon (3-24 h), timer highlight during the last N minutes.
+- "Сбросить оформление" (reset look) restores the default look without moving the overlay.
 
-**Настройки → «Оверлей: поведение»**
+**Settings → "Оверлей: поведение" (behaviour)**
 
-- Показывать оверлей, поверх всех окон, click-through (пропуск кликов), закрепить позицию.
-- Привязка к краю экрана (углы и центры сторон) с отступом — оверлей остаётся на месте при смене размера.
-- Автоскрытие: прятать оверлей, пока свет есть и до отключения больше N минут.
+- Show overlay, always on top, click-through, lock position.
+- Anchor to a screen corner or edge centre with a margin, so the overlay stays in place when its size changes.
+- Auto-hide: hide the overlay while power is on and the next outage is more than N minutes away.
 
-**Управление мышью**
+**Mouse controls**
 
-| Действие | Результат |
+| Action | Result |
 |---|---|
-| Перетаскивание | перемещение (с прилипанием к краям экрана; снимает привязку к углу) |
-| Двойной клик | следующий режим |
-| Правый клик | быстрое меню: режим, тема, масштаб, элементы, закрепление |
-| Ctrl + колесо | масштаб ±10 % |
+| Drag | move (snaps to screen edges; removes corner anchoring) |
+| Double-click | next mode |
+| Right-click | quick menu: mode, theme, scale, elements, lock |
+| Ctrl + wheel | scale ±10 % |
 
-Настройки хранятся в `~/.power_monitor/config.json`; некорректные значения при загрузке
-автоматически исправляются.
+Settings are stored in `~/.power_monitor/config.json`. Invalid values are corrected automatically on load.
 
-## Быстрый старт
+## Quick start
 
-Нужен Python 3.10+.
+Requires Python 3.10+.
 
 ```bash
 python -m venv .venv
@@ -98,7 +102,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-## Сборка `.exe` (Windows)
+## Building the `.exe` (Windows)
 
 ```bash
 pip install pyinstaller
@@ -108,10 +112,10 @@ pip install pyinstaller
 pyinstaller --noconfirm PowerMonitor.spec
 ```
 
-Готовый файл — `dist/PowerMonitor.exe`. При пуше тега `v*` GitHub Actions собирает exe автоматически
-и прикрепляет его к релизу.
+The result is `dist/PowerMonitor.exe`. Pushing a `v*` tag makes GitHub Actions build the exe
+and attach it to the release.
 
-## Разработка
+## Development
 
 ```bash
 pip install -r requirements-dev.txt
@@ -125,31 +129,39 @@ python -m pytest
 ruff check . && ruff format --check .
 ```
 
-Тесты виджета оверлея рисуют все режимы без дисплея (`QT_QPA_PLATFORM=offscreen`); если PySide6 недоступен,
-они пропускаются. CI запускает линтер и тесты на Ubuntu и Windows.
+Overlay widget tests render every mode without a display (`QT_QPA_PLATFORM=offscreen`); they are skipped
+if PySide6 is unavailable. CI runs the linter and tests on Ubuntu and Windows.
 
-## Структура проекта
+## Project structure
 
 ```
 power-monitor/
-├── main.py                       # точка входа
+├── main.py                       # entry point
 ├── power_monitor/
-│   ├── app.py                    # трей, таймеры, связывание компонентов
-│   ├── config.py                 # AppConfig: настройки, валидация, сохранение
-│   ├── models.py                 # интервалы, разбор фида, расчёты по графику
-│   ├── providers.py              # загрузка фида и офлайн-кэш
-│   ├── overlay.py                # виджет оверлея (все режимы)
-│   ├── overlay_style.py          # палитры, форматирование, геометрия (без Qt)
-│   ├── settings_dialog.py        # окно настроек с живым предпросмотром
-│   ├── popup.py                  # окно расписания из трея
-│   ├── notifier.py               # уведомления и тихие часы
-│   └── tray_icons.py             # векторные иконки трея
+│   ├── app.py                    # tray, timers, wiring
+│   ├── config.py                 # AppConfig: settings, validation, saving
+│   ├── models.py                 # intervals, feed parsing, schedule calculations
+│   ├── providers.py              # feed download and offline cache
+│   ├── overlay.py                # overlay widget (all modes)
+│   ├── overlay_style.py          # palettes, formatting, geometry (no Qt)
+│   ├── settings_dialog.py        # settings window with live preview
+│   ├── popup.py                  # schedule popup from the tray
+│   ├── notifier.py               # notifications and quiet hours
+│   └── tray_icons.py             # vector tray icons
 ├── tests/                        # unittest/pytest
-├── PowerMonitor.spec             # конфигурация PyInstaller
-└── .github/workflows/            # CI и сборка exe
+├── PowerMonitor.spec             # PyInstaller configuration
+└── .github/workflows/            # CI and exe build
 ```
 
-## Источник данных
+## Data source
 
-Нормализованные JSON-фиды из [mrkaktuz/outages-data](https://github.com/mrkaktuz/outages-data)
-(лицензия CC BY 4.0). Приложение не является официальным продуктом облэнерго — сверяйтесь с первоисточником.
+Normalized JSON feeds from [mrkaktuz/outages-data](https://github.com/mrkaktuz/outages-data)
+(CC BY 4.0). This app is not an official product of any power distribution company; always check the
+original source.
+
+## AI assistance
+
+Parts of this project (code, tests and documentation) were developed with the help of
+[Claude Code](https://claude.com/claude-code), an AI coding assistant by Anthropic.
+AI-assisted commits are marked with a `Co-Authored-By` trailer in the git history.
+The maintainer reviews these changes and is responsible for the project.
