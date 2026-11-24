@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import (
-    QFrame,
     QHBoxLayout,
     QLabel,
     QListWidget,
@@ -16,7 +15,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from power_monitor.models import Interval, STATUS_LABELS
+from power_monitor.models import STATUS_LABELS, Interval
 
 
 class SchedulePopup(QWidget):
@@ -35,10 +34,16 @@ class SchedulePopup(QWidget):
             """
             QWidget { background-color: #111827; color: #f9fafb; font-family: 'Segoe UI'; }
             QTabWidget::pane { border: 1px solid #374151; border-radius: 6px; }
-            QTabBar::tab { background: #1f2937; color: #9ca3af; padding: 6px 14px; border-top-left-radius: 6px; border-top-right-radius: 6px; }
+            QTabBar::tab {
+                background: #1f2937; color: #9ca3af; padding: 6px 14px;
+                border-top-left-radius: 6px; border-top-right-radius: 6px;
+            }
             QTabBar::tab:selected { background: #374151; color: #ffffff; font-weight: bold; }
             QListWidget { background: #111827; border: none; padding: 4px; }
-            QPushButton { background: #1f2937; border: 1px solid #374151; border-radius: 6px; padding: 6px 10px; color: #e5e7eb; }
+            QPushButton {
+                background: #1f2937; border: 1px solid #374151; border-radius: 6px;
+                padding: 6px 10px; color: #e5e7eb;
+            }
             QPushButton:hover { background: #374151; }
             """
         )
@@ -96,5 +101,6 @@ class SchedulePopup(QWidget):
         for iv in ivs:
             icon = "🔴" if iv.kind == "off" else "🟡"
             label = STATUS_LABELS.get(iv.kind, iv.kind)
-            text = f"{icon}  {iv.start.strftime('%H:%M')} – {iv.end.strftime('%H:%M')}   ({label}, {iv.duration_minutes} мин)"
+            span = f"{iv.start.strftime('%H:%M')} – {iv.end.strftime('%H:%M')}"
+            text = f"{icon}  {span}   ({label}, {iv.duration_minutes} мин)"
             widget.addItem(QListWidgetItem(text))

@@ -91,7 +91,7 @@ def format_duration(delta: Optional[timedelta]) -> str:
 
 
 def find_next_on_window_minutes(intervals: list[Interval], now: datetime) -> Optional[int]:
-    '''Returns duration in minutes of the next 'on' window (or current 'on' window remaining).'''
+    """Returns duration in minutes of the next 'on' window (or current 'on' window remaining)."""
     future_offs = [iv for iv in intervals if iv.end > now]
     if not future_offs:
         return None
@@ -103,3 +103,20 @@ def find_next_on_window_minutes(intervals: list[Interval], now: datetime) -> Opt
             return None
         return int((after[0].start - next_start).total_seconds() // 60)
     return int((future_offs[0].start - now).total_seconds() // 60)
+
+
+def current_period(
+    intervals: list[Interval], now: datetime
+) -> tuple[Optional[datetime], Optional[datetime], Optional[Interval]]:
+    """Bounds of the period ``now`` falls into.
+
+    Returns ``(start, end, interval)``: inside an outage interval it is that interval;
+    otherwise it is the "power on" gap between the previous interval's end and the next
+    one's start (either bound may be None when there is no such interval).
+    """
+    for iv in intervals:
+        if iv.start <= now < iv.end:
+            return iv.start, iv.end, iv
+    prev_end = max((iv.end for iv in intervals if iv.end <= now), default=None)
+    next_start = min((iv.start for iv in intervals if iv.start > now), default=None)
+    return prev_end, next_start, None

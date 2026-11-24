@@ -1,0 +1,45 @@
+[project]
+name = "power-monitor"
+dynamic = ["version"]
+description = "Трей-приложение и оверлей для графиков почасовых отключений электроэнергии (ГПВ) в Украине"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "PySide6>=6.6.0",
+  "requests>=2.31.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "ruff>=0.6",
+  "pyinstaller>=6.0",
+]
+
+[project.gui-scripts]
+power-monitor = "main:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["power_monitor"]
+py-modules = ["main"]
+
+[tool.setuptools.dynamic]
+version = { attr = "power_monitor.__version__" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+ignore = ["UP045", "UP007"]  # keep Optional[...] for readability
+
+[tool.ruff.lint.isort]
+known-first-party = ["power_monitor"]
