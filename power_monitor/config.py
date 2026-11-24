@@ -48,6 +48,12 @@ OVERLAY_ANCHORS = {
     "bottom-right": "Снизу справа",
 }
 
+NOTIFY_METHODS = {
+    "system": "Системные (Windows / ОС)",
+    "builtin": "Встроенные всплывающие окна",
+    "both": "Системные и встроенные",
+}
+
 TRAY_ICON_STYLES = {
     "bolt_badge": "Бейдж с молнией (⚡)",
     "battery": "Батарея",
@@ -70,6 +76,7 @@ _INT_RANGES: dict[str, tuple[int, int]] = {
     "overlay_timeline_hours": (3, 24),
     "overlay_warn_min": (0, 120),
     "overlay_auto_hide_min": (0, 720),
+    "notify_duration_sec": (3, 60),
     "overlay_x": (-10000, 10000),
     "overlay_y": (-10000, 10000),
 }
@@ -78,6 +85,7 @@ _INT_RANGES: dict[str, tuple[int, int]] = {
 _CHOICES: dict[str, tuple[str, ...]] = {
     "region": tuple(REGIONS),
     "tray_icon_style": tuple(TRAY_ICON_STYLES),
+    "notify_method": tuple(NOTIFY_METHODS),
     "overlay_mode": tuple(OVERLAY_MODES),
     "overlay_theme": tuple(OVERLAY_THEMES),
     "overlay_anchor": tuple(OVERLAY_ANCHORS),
@@ -103,6 +111,8 @@ class AppConfig:
     quiet_end_hour: int = 7
     silent_tomorrow_notify: bool = True
     min_charge_window_min: int = 60  # ALLPOWERS R1500 Lite full charge ~60 min
+    notify_method: str = "system"  # "system" | "builtin" | "both"; see NOTIFY_METHODS
+    notify_duration_sec: int = 8
 
     # Tray
     tray_icon_style: str = "bolt_badge"

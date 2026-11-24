@@ -35,6 +35,10 @@ The app interface is currently in Russian.
 - **Floating overlay (HUD):** five display modes, themes, custom colours, scaling, screen-corner anchoring,
   auto-hide, click-through and always-on-top. Every change in the settings is previewed live.
 - **Notifications:** N minutes before an outage starts or ends, and when the schedule changes; quiet hours.
+  System notifications, the app's own pop-ups (work even when Windows blocks notifications) or both.
+  Tray menu → "Тестовое уведомление" checks delivery; a log is kept in `~/.power_monitor/power_monitor.log`.
+  If system notifications do not appear on Windows, check Settings → System → Notifications
+  (enabled for Power Monitor / Python) and Do Not Disturb / Focus Assist rules for games and full-screen apps.
 - **Power station hint:** a warning when the next window with power is shorter than a set threshold
   (for example, under 60 minutes for a full charge).
 - **Offline cache:** if the network fails, the schedule is read from a local cache and the countdown continues.

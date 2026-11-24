@@ -30,6 +30,7 @@ from PySide6.QtWidgets import (
 )
 
 from power_monitor.config import (
+    NOTIFY_METHODS,
     OVERLAY_ANCHORS,
     OVERLAY_MODES,
     OVERLAY_THEMES,
@@ -140,10 +141,12 @@ class SettingsDialog(QDialog):
         preview: Optional[Callable[[AppConfig], None]] = None,
         parent: Optional[QWidget] = None,
         initial_tab: int = 0,
+        notifier=None,
     ) -> None:
         super().__init__(parent)
         self.config = config
         self._preview = preview
+        self._notifier = notifier
         self._draft = replace(config)
         self.setWindowTitle("Настройки Power Monitor")
         self.setMinimumWidth(460)
@@ -309,7 +312,43 @@ class SettingsDialog(QDialog):
         form.addRow("", self.quiet_check)
         form.addRow("Тихие часы с:", self.quiet_start_spin)
         form.addRow("Тихие часы до:", self.quiet_end_spin)
+
+        self.notify_method_combo = _combo(NOTIFY_METHODS, c.notify_method)
+        self.notify_duration_spin = _spin(3, 60, c.notify_duration_sec, " с")
+        form.addRow("Способ уведомлений:", self.notify_method_combo)
+        form.addRow("Показывать:", self.notify_duration_spin)
+        if self._notifier is not None:
+            test_btn = QPushButton("Отправить тестовое уведомление")
+            test_btn.clicked.connect(self._send_test_notification)
+            self.notify_diag_label = QLabel(self._notifier.diagnostics())
+            self.notify_diag_label.setStyleSheet("color: gray;")
+            self.notify_diag_label.setWordWrap(True)
+            form.addRow("", test_btn)
+            form.addRow(self.notify_diag_label)
+        help_label = QLabel(
+            "Если системные уведомления не появляются, проверьте в Windows: Параметры → Система → "
+            "Уведомления (включены для Power Monitor / Python), режим «Не беспокоить» / Фокусировка "
+            "внимания и автоправила для игр и полноэкранных приложений. Встроенные всплывающие окна "
+            "от этих настроек не зависят."
+        )
+        help_label.setWordWrap(True)
+        help_label.setStyleSheet("color: gray;")
+        form.addRow(help_label)
         return tab
+
+    def _send_test_notification(self) -> None:
+        """Sends a test notification using the values currently selected in the dialog."""
+        draft = replace(self.config)
+        self._collect(draft)
+        saved = self._notifier.config
+        self._notifier.config = draft
+        try:
+            channels = self._notifier.send_test()
+        finally:
+            self._notifier.config = saved
+        names = {"system": "системное", "builtin": "встроенное"}
+        sent = ", ".join(names[ch] for ch in channels) or "ничего"
+        self.notify_diag_label.setText(f"Отправлено: {sent}.\n{self._notifier.diagnostics()}")
 
     # --------------------------------------------------------------- preview
     def _overlay_widgets(self) -> list[QWidget]:
@@ -442,6 +481,8 @@ class SettingsDialog(QDialog):
         c.quiet_hours_enabled = self.quiet_check.isChecked()
         c.quiet_start_hour = self.quiet_start_spin.value()
         c.quiet_end_hour = self.quiet_end_spin.value()
+        c.notify_method = self.notify_method_combo.currentData()
+        c.notify_duration_sec = self.notify_duration_spin.value()
         c.sanitize()
 
     def apply_to_config(self) -> bool:
