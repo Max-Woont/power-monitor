@@ -115,8 +115,12 @@ pip install pyinstaller
 pyinstaller --noconfirm PowerMonitor.spec
 ```
 
-Готовий файл: `dist/PowerMonitor.exe`. Після пушу тегу `v*` GitHub Actions збирає exe автоматично
-й додає його до релізу.
+Готовий файл: `dist/PowerMonitor.exe`.
+
+**Реліз на GitHub:** **Releases → Draft a new release**, створіть новий тег, наприклад `v1.2.0`, на гілці `master`
+і натисніть **Publish release**. GitHub Actions збере exe і за кілька хвилин додасть до релізу
+`PowerMonitor-windows.zip` (exe та файли ліцензій). **Actions → Build Windows exe → Run workflow** збирає
+пробну версію без релізу.
 
 ## Розробка
 

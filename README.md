@@ -114,8 +114,12 @@ pip install pyinstaller
 pyinstaller --noconfirm PowerMonitor.spec
 ```
 
-The result is `dist/PowerMonitor.exe`. Pushing a `v*` tag makes GitHub Actions build the exe
-and attach it to the release.
+The result is `dist/PowerMonitor.exe`.
+
+**Releases on GitHub:** open **Releases → Draft a new release**, create a new tag such as `v1.2.0` on `master`,
+and click **Publish release**. GitHub Actions then builds the exe and attaches `PowerMonitor-windows.zip`
+(exe plus license files) to the release within a few minutes. **Actions → Build Windows exe → Run workflow**
+builds a test artifact without a release.
 
 ## Development
 
