@@ -1,10 +1,9 @@
 import unittest
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 
 from power_monitor.models import (
     Interval,
     find_next_on_window_minutes,
-    merge_adjacent_intervals,
     parse_intervals,
     summarize_diff,
 )
@@ -38,15 +37,25 @@ class TestModels(unittest.TestCase):
         tz = timezone(timedelta(hours=2))
         now = datetime(2026, 11, 24, 9, 0, tzinfo=tz)
         ivs = [
-            Interval(datetime(2026, 11, 24, 8, 0, tzinfo=tz), datetime(2026, 11, 24, 10, 0, tzinfo=tz), "off"),
-            Interval(datetime(2026, 11, 24, 10, 45, tzinfo=tz), datetime(2026, 11, 24, 14, 0, tzinfo=tz), "off"),
+            Interval(
+                datetime(2026, 11, 24, 8, 0, tzinfo=tz), datetime(2026, 11, 24, 10, 0, tzinfo=tz), "off"
+            ),
+            Interval(
+                datetime(2026, 11, 24, 10, 45, tzinfo=tz), datetime(2026, 11, 24, 14, 0, tzinfo=tz), "off"
+            ),
         ]
         self.assertEqual(find_next_on_window_minutes(ivs, now), 45)
 
     def test_diff_summary(self):
         tz = timezone(timedelta(hours=2))
-        old = [Interval(datetime(2026, 11, 24, 8, 0, tzinfo=tz), datetime(2026, 11, 24, 10, 0, tzinfo=tz), "off")]
-        new = [Interval(datetime(2026, 11, 24, 12, 0, tzinfo=tz), datetime(2026, 11, 24, 14, 0, tzinfo=tz), "off")]
+        old = [
+            Interval(datetime(2026, 11, 24, 8, 0, tzinfo=tz), datetime(2026, 11, 24, 10, 0, tzinfo=tz), "off")
+        ]
+        new = [
+            Interval(
+                datetime(2026, 11, 24, 12, 0, tzinfo=tz), datetime(2026, 11, 24, 14, 0, tzinfo=tz), "off"
+            )
+        ]
         diff = summarize_diff(old, new)
         self.assertIn("Добавлено", diff)
         self.assertIn("Убрано", diff)

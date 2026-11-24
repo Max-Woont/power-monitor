@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+
 from PySide6.QtWidgets import QSystemTrayIcon
 
 from power_monitor.config import AppConfig

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Optional
 
 from PySide6.QtCore import QThread, QTimer
@@ -9,8 +9,8 @@ from PySide6.QtWidgets import QApplication, QDialog, QMenu, QSystemTrayIcon
 
 from power_monitor.config import AppConfig
 from power_monitor.models import (
-    Interval,
     STATUS_LABELS,
+    Interval,
     compute_schedule_hash,
     find_next_on_window_minutes,
     format_duration,
@@ -36,6 +36,8 @@ class PowerMonitorApp:
         self._thread: Optional[QThread] = None
 
         self.overlay = OverlayWidget(self.config)
+        self.overlay.config_changed.connect(self._sync_tray_actions)
+        self.overlay.settings_requested.connect(lambda: self.open_settings(SettingsDialog.TAB_OVERLAY_LOOK))
         self.tray = QSystemTrayIcon(
             make_tray_icon("unknown", self.config.tray_icon_style),
             self.qt_app,
@@ -81,8 +83,13 @@ class PowerMonitorApp:
         quit_action = QAction("Выход", menu)
         quit_action.triggered.connect(self.qt_app.quit)
 
+        # Quick overlay settings (mode, theme, scale, ...) — rebuilt each time so check marks are current.
+        self.overlay_menu = QMenu("Оверлей", menu)
+        self.overlay_menu.aboutToShow.connect(self._rebuild_overlay_menu)
+
         menu.addAction(self.toggle_overlay_action)
         menu.addAction(self.click_through_action)
+        menu.addMenu(self.overlay_menu)
         menu.addSeparator()
         menu.addAction(refresh_action)
         menu.addAction(settings_action)
@@ -100,6 +107,13 @@ class PowerMonitorApp:
             self.popup.show()
             self.popup.activateWindow()
 
+    def _rebuild_overlay_menu(self) -> None:
+        self.overlay_menu.clear()
+        self.overlay.populate_menu(self.overlay_menu)
+
+    def _sync_tray_actions(self) -> None:
+        self.click_through_action.setChecked(self.config.overlay_click_through)
+
     def toggle_overlay(self) -> None:
         self.config.overlay_visible = not self.config.overlay_visible
         self.config.save()
@@ -110,25 +124,26 @@ class PowerMonitorApp:
         self.config.save()
         self.overlay.apply_config()
 
-    def open_settings(self) -> None:
+    def open_settings(self, initial_tab: int = 0) -> None:
         groups = self.raw_data.get("groups", [])
-        dlg = SettingsDialog(self.config, groups)
-        if dlg.exec() == QDialog.Accepted:
-            region_changed = dlg.apply_to_config()
-            self.click_through_action.setChecked(self.config.overlay_click_through)
-            self.overlay.apply_config()
-            self.poll_timer.setInterval(self.config.poll_interval_min * 60 * 1000)
-            self.tray.setIcon(
-                make_tray_icon(self.last_status or "unknown", self.config.tray_icon_style)
+        dlg = SettingsDialog(self.config, groups, preview=self.overlay.apply_config, initial_tab=initial_tab)
+        accepted = dlg.exec() == QDialog.Accepted
+        if not accepted:
+            self.overlay.apply_config(self.config)  # drop the live preview
+            return
+        region_changed = dlg.apply_to_config()
+        self._sync_tray_actions()
+        self.overlay.apply_config(self.config)
+        self.poll_timer.setInterval(self.config.poll_interval_min * 60 * 1000)
+        self.tray.setIcon(make_tray_icon(self.last_status or "unknown", self.config.tray_icon_style))
+        if region_changed:
+            self.last_hash = None
+            self.fetch_schedule()
+        else:
+            self.intervals = parse_intervals(
+                self.raw_data, self.config.queue, self.config.treat_possible_as_off
             )
-            if region_changed:
-                self.last_hash = None
-                self.fetch_schedule()
-            else:
-                self.intervals = parse_intervals(
-                    self.raw_data, self.config.queue, self.config.treat_possible_as_off
-                )
-                self.tick_ui()
+            self.tick_ui()
 
     def fetch_schedule(self) -> None:
         if self._thread is not None and self._thread.isRunning():
@@ -151,7 +166,9 @@ class PowerMonitorApp:
         self.intervals = new_intervals
 
         if self.last_hash is not None and new_hash != self.last_hash:
-            now = datetime.now(new_intervals[0].start.tzinfo) if new_intervals else datetime.now().astimezone()
+            now = (
+                datetime.now(new_intervals[0].start.tzinfo) if new_intervals else datetime.now().astimezone()
+            )
             diff_text = summarize_diff(old_intervals, new_intervals)
             self.notifier.send(
                 f"График обновлён (оч. {self.config.queue})",
@@ -212,7 +229,8 @@ class PowerMonitorApp:
                     self.notifier.send_once(
                         f"off_{key}",
                         "Скоро отключение",
-                        f"Через ~{mins_left} мин ({next_change.strftime('%H:%M')}) по очереди {self.config.queue}.",
+                        f"Через ~{mins_left} мин ({next_change.strftime('%H:%M')}) "
+                        f"по очереди {self.config.queue}.",
                         now,
                         force=True,
                     )
